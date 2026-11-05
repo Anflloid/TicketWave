@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.28.2" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.66.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.66.0" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Згенеровані файли додає сам Grpc.Tools, тому вони прибрані зі стандартного пошуку *.cs,
+         інакше вони скомпілюються двічі -->
+    <Compile Remove="Generated/**" />
+
+    <!-- Контракт лежить у api/ (Contract-First), стаби генеруються в папку Generated/,
+         щоб їх можна було закомітити в репозиторій -->
+    <Protobuf Include="../../api/service.proto"
+              Link="Protos/service.proto"
+              ProtoRoot="../../api"
+              GrpcServices="Both"
+              OutputDir="Generated" />
+  </ItemGroup>
+
+</Project>

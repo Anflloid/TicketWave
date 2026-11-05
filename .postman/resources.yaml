@@ -1,0 +1,8 @@
+# Use this workspace to collaborate
+workspace:
+  id: db18e7a1-0507-409a-81df-d1bbb9975230
+
+localResources:
+  specs:
+    - ../api/openapi.yaml
+    - ../api/service.proto

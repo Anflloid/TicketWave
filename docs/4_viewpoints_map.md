@@ -8,10 +8,10 @@
 |---|---|---|---|---|
 | Context Viewpoint | C4 Level 1: System Context Diagram - TicketWave і зовнішні системи (платіжний шлюз, email, push, сканери на вході) | C4 Model / Structurizr | Business Owner, End User, Event Organizer, Payment Provider | Межі системи, з якими зовнішніми системами інтегрується |
 | Container Viewpoint | C4 Level 2: Container Diagram - Web SPA на Angular, мобільний застосунок, API Gateway, Backend на ASP.NET Core (модульний моноліт), PostgreSQL, Redis, RabbitMQ, Keycloak | C4 Model / PlantUML | Software Architect, Lead Developer, DevOps | Які технології використовую, як контейнери спілкуються між собою |
-| Structural Viewpoint | UML Component Diagram модулів (Catalog, Venue, Booking, Queue, Payment, Ticket, Notification) та Class Diagram доменної моделі бронювання | UML 2.5 | Developers, Module Owners | Модульність, залежності між модулями, доменна модель |
-| Behavioral Viewpoint | UML Sequence Diagram «Бронювання і оплата місця»; State Diagram статусів місця (FREE → RESERVED → SOLD / FREE) | UML 2.5 | Backend Developers, QA Engineers | Як система обробляє бронювання, як уникнути подвійного продажу, що відбувається після таймауту |
+| Structural Viewpoint | UML Component Diagram модулів (Catalog, Venue, Booking, Queue, Payment, Ticket, Notification) та Class Diagram доменної моделі бронювання | UML 2.5 | Developer (розробник проєкту) | Модульність, залежності між модулями, доменна модель |
+| Behavioral Viewpoint | UML Sequence Diagram «Бронювання і оплата місця»; State Diagram статусів місця (FREE → RESERVED → SOLD / FREE) | UML 2.5 | Developer, QA | Як система обробляє бронювання, як уникнути подвійного продажу, що відбувається після таймауту |
 | Deployment Viewpoint | UML Deployment Diagram - Kubernetes кластер у хмарі, поди, HPA, керовані БД, CDN | UML 2.5 / C4 Deployment | DevOps, Infrastructure Engineers, Security Officer | Масштабування, відмовостійкість, розміщення в хмарі |
-| Security Viewpoint | Діаграма потоків автентифікації (OAuth2 / OIDC через Keycloak) та зон довіри (DMZ, внутрішня мережа) | UML Sequence / Data Flow Diagram | Security Officer, DevOps, Developers | Захист даних, автентифікація, захист від ботів |
+| Security Viewpoint | Діаграма потоків автентифікації (OAuth2 / OIDC через Keycloak) та зон довіри (DMZ, внутрішня мережа) | UML Sequence / Data Flow Diagram | Security Officer, DevOps, Developer | Захист даних, автентифікація, захист від ботів |
 
 ## 4.2. Зв'язок ракурсів із документами проєкту
 

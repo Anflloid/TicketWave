@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+// Внутрішній контракт модуля Booking (IBookingModule з ЛР2).
+// Ним користуються модуль Payment (підтвердити продаж або зняти резерв)
+// і SignalR-хаб (потік змін статусів місць для схеми залу).
+// Якщо Booking винести в окремий сервіс (ADR-0001), виклики підуть по gRPC / HTTP/2.
+
+package ticketwave.booking.v1;
+
+option csharp_namespace = "TicketWave.Contracts.Booking.V1";
+
+import "google/protobuf/timestamp.proto";
+
+service BookingService {
+  // Unary: модуль Payment після успішної оплати переводить місця в SOLD
+  rpc ConfirmSale(ConfirmSaleRequest) returns (ConfirmSaleResponse);
+
+  // Unary: зняти резерв (оплату відхилено або минуло 10 хвилин)
+  rpc ReleaseReservation(ReleaseReservationRequest) returns (ReleaseReservationResponse);
+
+  // Unary: отримати бронювання разом з місцями
+  rpc GetReservation(GetReservationRequest) returns (Reservation);
+
+  // Server streaming: потік змін статусів місць на одній події
+  rpc WatchSeatStatus(WatchSeatStatusRequest) returns (stream SeatStatusChanged);
+}
+
+enum SeatStatus {
+  SEAT_STATUS_UNSPECIFIED = 0;
+  SEAT_STATUS_FREE = 1;
+  SEAT_STATUS_RESERVED = 2;
+  SEAT_STATUS_SOLD = 3;
+  SEAT_STATUS_BLOCKED = 4;
+}
+
+enum ReservationStatus {
+  RESERVATION_STATUS_UNSPECIFIED = 0;
+  RESERVATION_STATUS_ACTIVE = 1;
+  RESERVATION_STATUS_PAID = 2;
+  RESERVATION_STATUS_CANCELLED = 3;
+  RESERVATION_STATUS_EXPIRED = 4;
+}
+
+enum ReleaseReason {
+  RELEASE_REASON_UNSPECIFIED = 0;
+  RELEASE_REASON_PAYMENT_DECLINED = 1;
+  RELEASE_REASON_TIMEOUT = 2;
+  RELEASE_REASON_USER_CANCELLED = 3;
+}
+
+message Reservation {
+  // Вкладене повідомлення: одне місце в бронюванні
+  message ReservedSeat {
+    string seat_id = 1;
+    string sector_name = 2;
+    int32 row = 3;
+    int32 number = 4;
+    int64 price_kopecks = 5;   // ціна в копійках, щоб не мати проблем з округленням
+    double x = 6;              // координати для схеми залу
+    double y = 7;
+  }
+
+  string id = 1;
+  string event_id = 2;
+  string user_id = 3;
+  ReservationStatus status = 4;
+  repeated ReservedSeat seats = 5;
+  bool insurance = 6;
+  int64 total_kopecks = 7;
+  string currency = 8;
+  google.protobuf.Timestamp reserved_until = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message ConfirmSaleRequest {
+  string reservation_id = 1;
+  string payment_id = 2;          // id платежу в LiqPay
+  int64 paid_amount_kopecks = 3;
+  google.protobuf.Timestamp paid_at = 4;
+}
+
+message ConfirmSaleResponse {
+  // Вкладене повідомлення: створений квиток
+  message IssuedTicket {
+    string ticket_id = 1;
+    string seat_id = 2;
+    string qr_payload = 3;        // підписаний вміст QR-коду (NFR-12)
+  }
+
+  string reservation_id = 1;
+  ReservationStatus status = 2;
+  repeated IssuedTicket tickets = 3;
+}
+
+message ReleaseReservationRequest {
+  string reservation_id = 1;
+  ReleaseReason reason = 2;
+}
+
+message ReleaseReservationResponse {
+  string reservation_id = 1;
+  ReservationStatus status = 2;
+  int32 released_seats = 3;
+}
+
+message GetReservationRequest {
+  string reservation_id = 1;
+}
+
+message WatchSeatStatusRequest {
+  string event_id = 1;
+  string sector_id = 2;           // необов'язково: порожній рядок = усі сектори
+}
+
+message SeatStatusChanged {
+  string event_id = 1;
+  string seat_id = 2;
+  SeatStatus old_status = 3;
+  SeatStatus new_status = 4;
+  google.protobuf.Timestamp changed_at = 5;
+}

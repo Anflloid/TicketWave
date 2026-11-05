@@ -18,14 +18,24 @@ TicketWave - це вебплатформа, де можна купити кви�
 
 | Тег | Лабораторна | Головні артефакти |
 |-----|-------------|-------------------|
-| `lr1` | Вимоги, NFR, QAS, ADR | `docs/1_system_description.md` ... `docs/4_viewpoints_map.md`, `docs/adrs/` |
+| `Lr1` | Вимоги, NFR, QAS, ADR | `docs/1_system_description.md` ... `docs/4_viewpoints_map.md`, `docs/adrs/` |
 | `lr2` | C4 Model, UML | `diagrams/*.puml`, `docs/images/`, `docs/architecture_diagrams_report.md` |
+| `lr3` | OpenAPI 3.0, gRPC Proto3 | `api/openapi.yaml`, `api/service.proto`, `src/TicketWave.Contracts/`, `docs/api_specification_report.md` |
 
 ## Структура репозиторію
 
 ```
 TicketWave/
 ├── README.md
+├── .spectral.yaml                     # Правила лінтера OpenAPI (ЛР3)
+├── api/                               # Контракти API (ЛР3)
+│   ├── openapi.yaml                   # Публічний REST API, OpenAPI 3.0.3
+│   └── service.proto                  # Внутрішній gRPC API, proto3
+├── src/
+│   └── TicketWave.Contracts/          # .NET-проєкт, генерує gRPC-стаби з api/service.proto
+│       └── Generated/                 # Згенеровані Service.cs і ServiceGrpc.cs
+├── benchmark/
+│   └── payload_size.py                # Порівняння JSON vs Protobuf (ЛР3)
 ├── diagrams/                          # Вихідні файли PlantUML (ЛР2)
 │   ├── c4_context.puml
 │   ├── c4_container.puml
@@ -40,7 +50,8 @@ TicketWave/
     ├── 3_quality_scenarios.md         # Сценарії якісних атрибутів (QAS)
     ├── 4_viewpoints_map.md            # Карта ракурсів за ISO 42010:2022
     ├── architecture_diagrams_report.md # Звіт ЛР2 з усіма діаграмами
-    ├── images/                        # PNG діаграм (ЛР2)
+    ├── api_specification_report.md    # Звіт ЛР3
+    ├── images/                        # PNG діаграм (ЛР2) і скріншоти (images/lr3/)
     └── adrs/
         ├── 0001-architectural-style.md
         ├── 0002-database-strategy.md

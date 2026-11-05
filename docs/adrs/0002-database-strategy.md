@@ -29,7 +29,7 @@ Accepted
   SET status = 'RESERVED', reserved_by = :userId, reserved_until = now() + interval '10 minutes'
   WHERE id = :seatId AND status = 'FREE';
   ```
-  Якщо оновлено 0 рядків - місце вже зайняте, повертаємо 409 Conflict. Також на таблиці `tickets` стоїть унікальний індекс на (`event_id`, `seat_id`) як додатковий захист;
+  Якщо оновлено 0 рядків - місце вже зайняте, і API повертає 409 Conflict. Також на таблиці `tickets` стоїть унікальний індекс на (`event_id`, `seat_id`) як додатковий захист;
 - схем залів - зберігати в полі типу **JSONB**, тому окрема документна БД не потрібна;
 - пошуку подій на першому етапі - через Full-Text Search у PostgreSQL та індекси.
 
@@ -42,7 +42,7 @@ Accepted
 
 Основне джерело правди - тільки PostgreSQL. Redis - допоміжний: якщо дані в Redis пропадуть, їх можна відновити з PostgreSQL.
 
-Для надійності PostgreSQL запускаємо в керованому хмарному сервісі з репліками (primary + read replica) і автоматичними бекапами (для RPO ≤ 1 хв за NFR-09).
+Для надійності PostgreSQL розгортається в керованому хмарному сервісі з репліками (primary + read replica) і автоматичними бекапами (для RPO ≤ 1 хв за NFR-09).
 
 ## Розглянуті альтернативи (Alternatives Considered)
 

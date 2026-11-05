@@ -1,0 +1,30 @@
+extends: ["spectral:oas"]
+
+rules:
+  # Усі помилки 4xx і 5xx мають бути у форматі RFC 7807
+  error-responses-problem-json:
+    description: Відповіді 4xx/5xx повинні мати тип application/problem+json
+    severity: error
+    given: "$.paths.*.*.responses[?(@property >= '400')]"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          oneOf:
+            - required: ["$ref"]
+            - required: ["content"]
+              properties:
+                content:
+                  required: ["application/problem+json"]
+
+  # Кожна операція повинна мати operationId (з нього генеруються методи клієнта)
+  operation-operationId: error
+
+  # Кожна операція повинна мати опис або summary
+  operation-summary-required:
+    description: Операція повинна мати summary
+    severity: warn
+    given: "$.paths.*[get,post,put,patch,delete]"
+    then:
+      field: summary
+      function: truthy
