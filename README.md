@@ -51,9 +51,23 @@ TicketWave/
     ├── 4_viewpoints_map.md            # Карта ракурсів за ISO 42010:2022
     ├── architecture_diagrams_report.md # Звіт ЛР2 з усіма діаграмами
     ├── api_specification_report.md    # Звіт ЛР3
-    ├── images/                        # PNG діаграм (ЛР2) і скріншоти (images/lr3/)
+    ├── images/                     # PNG діаграм (ЛР2) і скріншоти (images/lr3/)
+    │   ├── lr3/     # Скріншоти ЛР3
+    │   │   ├── dotnet_build_stubs.png
+    │   │   ├── postman_get_seats.png
+    │   │   ├── postman_post_201.png
+    │   │   ├── postman_post_422.png
+    │   │   └── prism_start.png
+    │   ├── c4_context.png             # Діаграми ЛР2
+    │   ├── c4_container.png
+    │   ├── component_booking.png
+    │   ├── class_domain.png
+    │   ├── sequence_booking_payment.png
+    │   ├── sequence_queue_seatmap.png
+    │   └── state_event_seat.png
     └── adrs/
         ├── 0001-architectural-style.md
         ├── 0002-database-strategy.md
         └── 0003-security-framework.md
+ 
 ```
