@@ -1,0 +1,60 @@
+@startuml
+skinparam dpi 120
+title Сценарій 1: бронювання місць і оплата
+
+actor "Покупець" as U
+participant "Web App\n(Angular)" as W
+participant "Backend API" as A
+database "PostgreSQL" as DB
+participant "Redis" as R
+participant "LiqPay" as L
+queue "RabbitMQ" as Q
+
+U -> W : обрати місця на схемі, «Забронювати»
+W -> A : POST /reservations {eventId, seatIds} (JWT)
+
+alt токен недійсний або прострочений
+  A --> W : 401 Unauthorized
+  W --> U : перенаправити на вхід
+else токен дійсний
+  A -> DB : скільки квитків уже має користувач на подію
+  alt разом більше ніж 4 квитки
+    A --> W : 422 «Ліміт 4 квитки на подію»
+  else ліміт не перевищено
+    loop для кожного обраного місця
+      A -> DB : UPDATE seats SET status = RESERVED\nWHERE id = :seatId AND status = FREE
+      DB --> A : оновлено рядків: 1 або 0
+    end
+    alt хоч одне місце вже зайняте (0 рядків)
+      A -> DB : ROLLBACK
+      A --> W : 409 Conflict «Місце вже зайняте»
+      W --> U : показати, які місця зайняті
+    else всі місця зарезервовано
+      A -> DB : COMMIT, створити Order (PENDING)
+      A -> R : оновити статуси місць у кеші
+      A --> W : 201 Created {orderId, reservedUntil}
+      W --> U : таймер резерву 10 хв
+
+      opt покупець додав страховку квитка
+        W -> A : PATCH /orders/{id} {insurance: true}
+        A -> A : перерахувати суму
+      end
+
+      W -> A : POST /orders/{id}/payment
+      A -> L : створити платіж (HTTPS/JSON)
+      L --> W : сторінка оплати
+      U -> L : ввести дані картки
+      L -> A : callback з результатом
+      alt оплата успішна
+        A -> DB : місця SOLD, Order PAID, створити Ticket з QR
+        A -> Q : TicketIssued (AMQP)
+        A --> W : замовлення оплачено
+        W --> U : показати квитки
+      else оплату відхилено
+        A --> W : 402 «Оплата не пройшла»
+        W --> U : спробувати ще раз (резерв ще діє)
+      end
+    end
+  end
+end
+@enduml

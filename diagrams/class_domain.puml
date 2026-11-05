@@ -1,0 +1,123 @@
+@startuml
+skinparam dpi 120
+hide circle
+skinparam classAttributeIconSize 0
+title Доменна модель TicketWave (UML Class)
+
+class User {
+  - id: Guid
+  - email: string
+  - fullName: string
+  - isBlocked: bool
+  + canBuy(eventId: Guid): bool
+  + block(reason: string): void
+}
+
+class Venue {
+  - id: Guid
+  - name: string
+  - city: string
+  - schemaJson: string
+  + totalCapacity(): int
+}
+
+class Sector {
+  - id: Guid
+  - name: string
+  - color: string
+}
+
+class Seat {
+  - id: Guid
+  - row: int
+  - number: int
+  - x: double
+  - y: double
+}
+
+class Event {
+  - id: Guid
+  - title: string
+  - startsAt: DateTime
+  - salesStartAt: DateTime
+  - maxTicketsPerUser: int
+  + isOnSale(): bool
+  + publish(): void
+  + cancel(): void
+}
+
+class EventSeat {
+  - id: Guid
+  - status: SeatStatus
+  - price: decimal
+  - reservedBy: Guid?
+  - reservedUntil: DateTime?
+  + reserve(userId: Guid, minutes: int): bool
+  + release(): void
+  + markSold(): void
+  # isReservationExpired(now: DateTime): bool
+}
+
+class Order {
+  - id: Guid
+  - status: OrderStatus
+  - createdAt: DateTime
+  - total: decimal
+  + confirmPayment(paymentId: string): void
+  + cancel(): void
+  # calcTotal(): decimal
+}
+
+class Ticket {
+  - id: Guid
+  - qrCode: string
+  - signature: string
+  - isUsed: bool
+  + verify(secret: string): bool
+  + markUsed(): void
+}
+
+class Payment {
+  - id: Guid
+  - providerPaymentId: string
+  - amount: decimal
+  - status: PaymentStatus
+  - paidAt: DateTime?
+  + isSuccessful(): bool
+}
+
+enum SeatStatus {
+  FREE
+  RESERVED
+  SOLD
+  BLOCKED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  CREATED
+  SUCCESS
+  DECLINED
+}
+
+Venue "1" *-- "1..*" Sector : має
+Sector "1" *-- "1..*" Seat : містить
+Event "0..*" --> "1" Venue : проходить у
+Event "1" *-- "1..*" EventSeat : місця на подію
+EventSeat "0..*" --> "1" Seat : відповідає
+User "1" -- "0..*" Order : оформлює >
+Order "0..*" o-- "1..4" EventSeat : бронює
+Order "1" *-- "0..4" Ticket : містить
+Ticket "0..1" --> "1" EventSeat : на місце
+Order "1" -- "0..*" Payment : оплачується
+
+EventSeat --> SeatStatus
+Order --> OrderStatus
+Payment --> PaymentStatus
+@enduml

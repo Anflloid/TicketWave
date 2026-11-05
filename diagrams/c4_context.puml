@@ -1,0 +1,29 @@
+@startuml
+!include <C4/C4_Context>
+title TicketWave - System Context (C4 Level 1)
+
+Person(buyer, "Покупець", "Шукає події, обирає місця на схемі залу, купує квитки")
+Person(organizer, "Організатор", "Створює події, налаштовує схему залу і ціни, дивиться продажі")
+Person(controller, "Контролер на вході", "Сканує QR-коди квитків")
+Person(admin, "Адміністратор", "Модерує події, блокує підозрілі акаунти")
+
+System(tw, "TicketWave", "Платформа продажу квитків з інтерактивною схемою залу і захистом від перекупників")
+
+System_Ext(pay, "LiqPay", "Платіжний сервіс")
+System_Ext(email, "SendGrid", "Розсилка email з квитками")
+System_Ext(push, "Firebase Cloud Messaging", "Push-сповіщення")
+System_Ext(captcha, "Cloudflare Turnstile", "CAPTCHA, перевірка на бота")
+System_Ext(gates, "Турнікети на вході", "Пропускають глядача після перевірки квитка")
+
+Rel(buyer, tw, "Купує квитки, отримує QR-код", "HTTPS")
+Rel(organizer, tw, "Керує подіями, дивиться статистику", "HTTPS")
+Rel(controller, tw, "Перевіряє квитки", "HTTPS")
+Rel(admin, tw, "Модерує, блокує акаунти", "HTTPS")
+
+Rel(tw, pay, "Створює платіж, отримує результат", "HTTPS/JSON")
+Rel(tw, email, "Надсилає квитки і листи", "HTTPS/JSON")
+Rel(tw, push, "Надсилає сповіщення", "HTTPS/JSON")
+Rel(tw, captcha, "Перевіряє токен CAPTCHA", "HTTPS/JSON")
+Rel(gates, tw, "Перевіряє QR-код", "HTTPS/JSON")
+
+@enduml

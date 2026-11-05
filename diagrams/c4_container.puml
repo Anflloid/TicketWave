@@ -1,0 +1,53 @@
+@startuml
+!include <C4/C4_Container>
+title TicketWave - Container Diagram (C4 Level 2)
+
+Person(buyer, "Покупець")
+Person(organizer, "Організатор / Адміністратор")
+Person(controller, "Контролер на вході")
+
+System_Ext(pay, "LiqPay", "Платіжний сервіс")
+System_Ext(email, "SendGrid", "Email")
+System_Ext(push, "FCM", "Push-сповіщення")
+System_Ext(captcha, "Cloudflare Turnstile", "CAPTCHA")
+System_Ext(gates, "Турнікети на вході", "Зчитують QR-код")
+
+System_Boundary(tw, "TicketWave") {
+  Container(spa, "Web App", "Angular SPA", "Каталог, схема залу, кошик, кабінет організатора")
+  Container(mobile, "Mobile App", ".NET MAUI", "Застосунок покупця і режим сканера для контролера")
+  Container(gw, "API Gateway", "YARP (ASP.NET Core)", "Маршрутизація, rate limiting, TLS")
+  Container(api, "Backend API", ".NET 8, ASP.NET Core", "Модульний моноліт: Catalog, Venue, Booking, Queue, Payment, Ticket")
+  Container(worker, "Notification Worker", ".NET 8 Worker Service", "Надсилає email і push за подіями")
+  Container(idp, "Keycloak", "OAuth 2.0 / OIDC", "Вхід, ролі, 2FA для організаторів")
+  ContainerDb(db, "PostgreSQL", "СУБД", "Події, місця, замовлення, квитки, оплати, audit log")
+  ContainerDb(cache, "Redis", "In-memory сховище", "Кеш схеми залу і статусів місць, черга, rate limit")
+  ContainerQueue(mq, "RabbitMQ", "Брокер повідомлень", "Події TicketIssued, OrderCancelled, EventChanged")
+}
+
+Rel(buyer, spa, "Користується", "HTTPS")
+Rel(buyer, mobile, "Користується", "HTTPS")
+Rel(organizer, spa, "Користується", "HTTPS")
+Rel(controller, mobile, "Сканує квитки", "HTTPS")
+
+Rel(spa, gw, "Викликає REST API", "HTTPS/JSON")
+Rel(spa, gw, "Отримує статуси місць наживо", "WSS (SignalR)")
+Rel(mobile, gw, "Викликає REST API", "HTTPS/JSON")
+Rel(spa, idp, "Вхід користувача", "HTTPS (OIDC, PKCE)")
+Rel(mobile, idp, "Вхід користувача", "HTTPS (OIDC, PKCE)")
+
+Rel(gates, gw, "Перевіряє QR-код", "HTTPS/JSON")
+
+Rel(gw, api, "Передає запити", "HTTP/JSON")
+Rel(api, idp, "Бере ключі для перевірки JWT", "HTTPS (JWKS)")
+Rel(api, db, "Читає / пише", "TCP/IP (SQL, Npgsql)")
+Rel(api, cache, "Кеш, черга, лічильники", "TCP/IP (RESP)")
+Rel(api, mq, "Публікує події", "AMQP")
+Rel(mq, worker, "Доставляє події", "AMQP")
+
+Rel(api, pay, "Створює платіж", "HTTPS/JSON")
+Rel(pay, gw, "Callback про результат оплати", "HTTPS/JSON")
+Rel(api, captcha, "Перевіряє CAPTCHA", "HTTPS/JSON")
+Rel(worker, email, "Надсилає квиток", "HTTPS/JSON")
+Rel(worker, push, "Надсилає push", "HTTPS/JSON")
+
+@enduml

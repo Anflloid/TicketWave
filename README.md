@@ -14,20 +14,33 @@ TicketWave - це вебплатформа, де можна купити кви�
 |-----|-------|----------------|
 | Киселевич Андрій Юрійович |3ПР| Виконує проєкт самостійно (архітектура, документація, розробка) |
     
-## Лабораторна робота № 1
+## Лабораторні роботи
 
-Тема: специфікація архітектурних вимог, NFR за ISO/IEC 25010:2023, сценарії якісних атрибутів та ADR за ISO/IEC/IEEE 42010:2022.
+| Тег | Лабораторна | Головні артефакти |
+|-----|-------------|-------------------|
+| `lr1` | Вимоги, NFR, QAS, ADR | `docs/1_system_description.md` ... `docs/4_viewpoints_map.md`, `docs/adrs/` |
+| `lr2` | C4 Model, UML | `diagrams/*.puml`, `docs/images/`, `docs/architecture_diagrams_report.md` |
 
 ## Структура репозиторію
 
 ```
-my-architecture-project/
+TicketWave/
 ├── README.md
+├── diagrams/                          # Вихідні файли PlantUML (ЛР2)
+│   ├── c4_context.puml
+│   ├── c4_container.puml
+│   ├── component_booking.puml
+│   ├── class_domain.puml
+│   ├── sequence_booking_payment.puml
+│   ├── sequence_queue_seatmap.puml
+│   └── state_event_seat.puml
 └── docs/
-    ├── 1_system_description.md   # Опис системи, межі та матриця стейкхолдерів
-    ├── 2_nfr_specification.md    # Специфікація NFR за ISO 25010:2023
-    ├── 3_quality_scenarios.md    # 5 сценаріїв якісних атрибутів (QAS)
-    ├── 4_viewpoints_map.md       # Карта ракурсів за ISO 42010:2022
+    ├── 1_system_description.md        # Опис системи, межі та матриця стейкхолдерів
+    ├── 2_nfr_specification.md         # Специфікація NFR за ISO 25010:2023
+    ├── 3_quality_scenarios.md         # Сценарії якісних атрибутів (QAS)
+    ├── 4_viewpoints_map.md            # Карта ракурсів за ISO 42010:2022
+    ├── architecture_diagrams_report.md # Звіт ЛР2 з усіма діаграмами
+    ├── images/                        # PNG діаграм (ЛР2)
     └── adrs/
         ├── 0001-architectural-style.md
         ├── 0002-database-strategy.md

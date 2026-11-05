@@ -1,0 +1,64 @@
+@startuml
+skinparam dpi 120
+skinparam componentStyle uml2
+title Backend API - модуль Booking (C4 Level 3, UML Component)
+
+package "Backend API (ASP.NET Core)" {
+  [ReservationsController] as RC
+  [Модуль Payment] as PAY
+  [Модуль Queue] as QUE
+
+  package "Модуль Booking" {
+    [BookingService] as BS
+    [PurchaseLimitPolicy] as PLP
+    [SeatRepository\n(EF Core)] as SR
+    [RedisSeatCache] as SC
+    [SeatHubNotifier\n(SignalR)] as HUB
+    [RabbitMqPublisher] as PUB
+    interface IBookingService
+    interface IBookingModule
+    interface ISeatRepository
+    interface ISeatStatusCache
+    interface IPurchaseLimitPolicy
+    interface ISeatNotifier
+    interface IEventPublisher
+  }
+  interface IQueueAccess
+}
+
+' Provided (ball) - компонент реалізує інтерфейс
+IBookingService -- BS
+IBookingModule -- BS
+IQueueAccess -- QUE
+ISeatRepository -- SR
+ISeatStatusCache -- SC
+IPurchaseLimitPolicy -- PLP
+ISeatNotifier -- HUB
+IEventPublisher -- PUB
+
+' Required (socket) - компонент використовує інтерфейс
+RC --( IBookingService
+RC --( IQueueAccess
+PAY --( IBookingModule
+BS --( ISeatRepository
+BS --( ISeatStatusCache
+BS --( IPurchaseLimitPolicy
+BS --( ISeatNotifier
+BS --( IEventPublisher
+
+' Розташування рівнями: контролер -> сервіс -> адаптери
+RC -[hidden]---> BS
+PAY -[hidden]---> BS
+BS -[hidden]---> SR
+BS -[hidden]---> SC
+BS -[hidden]---> HUB
+BS -[hidden]---> PUB
+
+database "PostgreSQL" as DB
+database "Redis" as RD
+queue "RabbitMQ" as MQ
+
+SR --> DB : TCP/IP (SQL)
+SC --> RD : TCP/IP (RESP)
+PUB --> MQ : AMQP
+@enduml

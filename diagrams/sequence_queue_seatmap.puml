@@ -1,0 +1,49 @@
+@startuml
+skinparam dpi 120
+title Сценарій 2: віртуальна черга на старті продажів і відкриття схеми залу
+
+actor "Покупець" as U
+participant "Web App\n(Angular)" as W
+participant "API Gateway" as G
+participant "Backend API" as A
+participant "Cloudflare\nTurnstile" as C
+participant "Redis" as R
+database "PostgreSQL" as DB
+
+U -> W : відкрити подію о 10:00 (старт продажів)
+W -> G : POST /events/{id}/queue (JWT, captchaToken)
+
+alt більше ніж 10 запитів за хвилину з акаунта / IP
+  G --> W : 429 Too Many Requests
+else ліміт не перевищено
+  G -> A : передати запит
+  A -> C : перевірити captchaToken
+  alt CAPTCHA не пройдена
+    C --> A : invalid
+    A --> W : 403 Forbidden
+    W --> U : пройти перевірку ще раз
+  else CAPTCHA пройдена
+    C --> A : ok
+    A -> R : ZADD queue:{eventId} (час входу)
+    A --> W : позиція в черзі
+    loop кожні 5 с, поки покупець у черзі
+      W -> G : GET /events/{id}/queue/position
+      G -> A : передати запит
+      A -> R : ZRANK queue:{eventId}
+      A --> W : позиція, орієнтовний час очікування
+      W --> U : «Перед вами 1 250 людей»
+    end
+    A -> R : видати пропуск на 10 хв
+    A --> W : черга пройдена, пропуск
+    W -> G : GET /events/{id}/seatmap (пропуск)
+    G -> A : передати запит
+    A -> R : взяти схему і статуси місць з кешу
+    opt у кеші нічого немає
+      A -> DB : прочитати схему (JSONB) і статуси місць
+      A -> R : покласти в кеш
+    end
+    A --> W : схема залу зі статусами
+    W --> U : інтерактивна схема залу
+  end
+end
+@enduml
