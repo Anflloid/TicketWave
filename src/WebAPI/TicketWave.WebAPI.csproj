@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- WebAPI - зовнішній шар: тонкі ендпоінти і композиційний корінь (Program.cs). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>TicketWave.WebAPI</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\TicketWave.Application.csproj" />
+    <ProjectReference Include="..\Infrastructure\TicketWave.Infrastructure.csproj" />
+    <ProjectReference Include="..\Domain\TicketWave.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

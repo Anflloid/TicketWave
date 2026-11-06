@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Infrastructure реалізує порти Domain і Application. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>TicketWave.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\TicketWave.Application.csproj" />
+    <ProjectReference Include="..\Domain\TicketWave.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

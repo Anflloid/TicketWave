@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Domain - центр системи. Жодних посилань на інші проєкти і жодних NuGet-пакетів. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>TicketWave.Domain</RootNamespace>
+  </PropertyGroup>
+
+</Project>
