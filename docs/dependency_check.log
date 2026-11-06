@@ -1,0 +1,17 @@
+﻿> dotnet list src/Domain reference
+There are no Project to Project references in project src/Domain.
+> dotnet list src/Application reference
+Project reference(s)
+--------------------
+..\Domain\TicketWave.Domain.csproj
+> dotnet list src/Infrastructure reference
+Project reference(s)
+--------------------
+..\Application\TicketWave.Application.csproj
+..\Domain\TicketWave.Domain.csproj
+> dotnet list src/WebAPI reference
+Project reference(s)
+--------------------
+..\Application\TicketWave.Application.csproj
+..\Infrastructure\TicketWave.Infrastructure.csproj
+..\Domain\TicketWave.Domain.csproj

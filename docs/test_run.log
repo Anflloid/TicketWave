@@ -1,0 +1,21 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  TicketWave.Domain -> C:\Users\123321\Documents\GitHub\TicketWave\src\Domain\bin\Debug\net10.0\TicketWave.Domain.dll
+  TicketWave.Application -> C:\Users\123321\Documents\GitHub\TicketWave\src\Application\bin\Debug\net10.0\TicketWave.Application.dll
+  TicketWave.Application.Tests -> C:\Users\123321\Documents\GitHub\TicketWave\tests\TicketWave.Application.Tests\bin\Debug\net10.0\TicketWave.Application.Tests.dll
+Test run for C:\Users\123321\Documents\GitHub\TicketWave\tests\TicketWave.Application.Tests\bin\Debug\net10.0\TicketWave.Application.Tests.dll (.NETCoreApp,Version=v10.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.1+bf6400fd51 (64-bit .NET 10.0.9)
+[xUnit.net 00:00:00.08]   Discovering: TicketWave.Application.Tests
+[xUnit.net 00:00:00.12]   Discovered:  TicketWave.Application.Tests
+[xUnit.net 00:00:00.14]   Starting:    TicketWave.Application.Tests
+[xUnit.net 00:00:00.30]   Finished:    TicketWave.Application.Tests
+  Passed TicketWave.Application.Tests.CreateReservationUseCaseTests.Execute_FreeSeats_ReservesAndSavesThroughRepository [96 ms]
+  Passed TicketWave.Application.Tests.CreateReservationUseCaseTests.Execute_TicketLimitExceeded_IsRejectedByDomain_AndNothingIsSaved [16 ms]
+  Passed TicketWave.Application.Tests.CreateReservationUseCaseTests.Execute_RepositoryFails_ErrorReachesUseCase_AndNoNotificationIsSent [3 ms]
+  Passed TicketWave.Application.Tests.CreateReservationUseCaseTests.Execute_SeatAlreadyReserved_IsRejectedByDomain_AndNothingIsSaved [5 ms]
+
+Test Run Successful.
+Total tests: 4
+     Passed: 4
+ Total time: 0,8039 Seconds
